@@ -45,7 +45,7 @@ if (getcwd() . DIRECTORY_SEPARATOR !== FCPATH) {
 
 // LOAD OUR PATHS CONFIG FILE
 // Esta línea fue modificada para compatibilidad con Hostinger
-require realpath(FCPATH . '../app/Config/Paths.php');
+require realpath(FCPATH . '../SnteWeb/app/Config/Paths.php');
 
 $paths = new Config\Paths();
 
