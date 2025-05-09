@@ -21,31 +21,28 @@ class UsuariosController extends Controller
         $session = session();
         $userModel = new UserModel();
 
-        // Obtener los datos del formulario
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
-        // Buscar al usuario por su correo
         $user = $userModel->where('email', $email)->first();
 
-    
-        // Verificar las credenciales
         if ($user && password_verify($password, $user['password'])) {
-
-            // Guardar los datos del usuario en la sesión
             $session->set([
-                'user_id' => $user['id'],
-                'email' => $user['email'],
-                'role' => $user['role'],
+                'user_id'   => $user['id'],
+                'email'     => $user['email'],
+                'role'      => $user['role'],
                 'logged_in' => true
             ]);
 
-            // Redirigir según el rol del usuario
-            return redirect()->to($user['role'] === 'cliente' ? '/productos' : '/reportes');
+            // Redirigir según rol
+            if ($user['role'] === 'cliente') {
+                return redirect()->to('/productos');
+            } elseif ($user['role'] === 'empleado') {
+                return redirect()->to('/inventario');
+            } else {
+                return redirect()->to('/')->with('error', 'Rol de usuario no válido.');
+            }
         } else {
-            print_r($user);
-            var_dump(  password_verify($user['password'], $password));
-            // Mostrar mensaje de error si las credenciales son incorrectas
             return redirect()->back()->with('error', 'Credenciales incorrectas');
         }
     }
@@ -54,36 +51,35 @@ class UsuariosController extends Controller
     {
         $userModel = new UserModel();
 
-        // Obtener los datos del formulario
-        $nombres = $this->request->getPost('nombres');
+        $nombres   = $this->request->getPost('nombres');
         $apellidos = $this->request->getPost('apellidos');
-        $telefono = $this->request->getPost('telefono');
-        $email = $this->request->getPost('email'); // Obtener correo
-        $password = $this->request->getPost('password');
-        $role = $this->request->getPost('tipo_usuario');
+        $telefono  = $this->request->getPost('telefono');
+        $email     = $this->request->getPost('email');
+        $password  = $this->request->getPost('password');
+        $role      = $this->request->getPost('tipo_usuario');
 
-        // Verificar si el correo ya está registrado
-        $existingUser = $userModel->where('email', $email)->first();
-        if ($existingUser) {
+        // Verificar si ya existe
+        if ($userModel->where('email', $email)->first()) {
             return redirect()->back()->with('error', 'El correo electrónico ya está registrado');
         }
 
-        // Registrar el nuevo usuario
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        
         $userModel->save([
-            'nombres' => $nombres,
+            'nombres'   => $nombres,
             'apellidos' => $apellidos,
-            'telefono' => $telefono,
-            'email' => $email,  // Guardar correo en la base de datos
-            'password' => $hashedPassword,
-            'role' => $role
+            'telefono'  => $telefono,
+            'email'     => $email,
+            'password'  => $hashedPassword,
+            'role'      => $role
         ]);
 
-    
-
-        // Redirigir al login después de un registro exitoso
         return redirect()->to('login')->with('success', 'Registro exitoso. Ahora puedes iniciar sesión');
+    }
+
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to('/login');
     }
 }
