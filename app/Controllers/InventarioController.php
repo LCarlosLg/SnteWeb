@@ -2,8 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\ProductoModel;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use App\Libraries\DompdfLoader;
 
 class InventarioController extends BaseController
 {
@@ -106,14 +105,11 @@ class InventarioController extends BaseController
         $productoModel = new ProductoModel();
         $productos = $productoModel->findAll();
 
-        $html = view('reporte_pf', [
-            'productos' => $productos
-        ]);
+        $html = view('reporte_pdf', ['productos' => $productos]);
 
-        $options = new Options();
-        $options->set('isRemoteEnabled', true);
+        $dompdfLoader = new DompdfLoader();
+        $dompdf = $dompdfLoader->load();
 
-        $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
