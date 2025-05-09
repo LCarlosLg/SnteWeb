@@ -24,5 +24,5 @@ $routes->group('', ['filter' => 'role:empleado'], function ($routes) {
     $routes->post('/inventario/agregar', 'InventarioController::agregar');
     $routes->get('/inventario/eliminar/(:num)', 'InventarioController::eliminar/$1');
     $routes->get('/inventario/imagen/(:num)', 'InventarioController::obtenerImagen/$1');
+    $routes->get('/inventario/reporte', 'InventarioController::descargarReporte');
 });
-

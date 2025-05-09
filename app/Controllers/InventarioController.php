@@ -2,7 +2,8 @@
 namespace App\Controllers;
 
 use App\Models\ProductoModel;
-use CodeIgniter\HTTP\RequestInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class InventarioController extends BaseController
 {
@@ -10,13 +11,16 @@ class InventarioController extends BaseController
     {
         $productoModel = new ProductoModel();
         $data['productos'] = $productoModel->findAll();
+
+        $data['success'] = session()->getFlashdata('success');
+        $data['error'] = session()->getFlashdata('error');
+
         return view('inventario', $data);
     }
 
     public function agregar()
     {
         helper(['form', 'url']);
-
         $imagen = $this->request->getFile('imagen');
         $imagenBlob = null;
 
@@ -33,13 +37,18 @@ class InventarioController extends BaseController
             'imagen' => $imagenBlob
         ]);
 
+        session()->setFlashdata('success', 'Producto agregado correctamente.');
         return redirect()->to('/inventario');
     }
 
     public function eliminar($id)
     {
         $productoModel = new ProductoModel();
-        $productoModel->delete($id);
+        if ($productoModel->delete($id)) {
+            session()->setFlashdata('success', 'Producto eliminado correctamente.');
+        } else {
+            session()->setFlashdata('error', 'No se pudo eliminar el producto.');
+        }
         return redirect()->to('/inventario');
     }
 
@@ -54,7 +63,64 @@ class InventarioController extends BaseController
                         ->setBody($producto['imagen']);
         }
 
-        // Imagen de respaldo si no hay
         return redirect()->to(base_url('images/placeholder.png'));
+    }
+
+    public function actualizar($id)
+    {
+        helper(['form', 'url']);
+        $productoModel = new ProductoModel();
+        $producto = $productoModel->find($id);
+
+        if (!$producto) {
+            session()->setFlashdata('error', 'Producto no encontrado.');
+            return redirect()->to('/inventario');
+        }
+
+        $imagen = $this->request->getFile('imagen');
+        $imagenBlob = $producto['imagen'];
+
+        if ($imagen && $imagen->isValid() && !$imagen->hasMoved()) {
+            $imagenBlob = file_get_contents($imagen->getTempName());
+        }
+
+        $actualizado = $productoModel->update($id, [
+            'nombre' => $this->request->getPost('nombre'),
+            'stock' => $this->request->getPost('stock'),
+            'precio' => $this->request->getPost('precio'),
+            'categoria' => $this->request->getPost('categoria'),
+            'imagen' => $imagenBlob
+        ]);
+
+        if ($actualizado) {
+            session()->setFlashdata('success', 'Producto actualizado correctamente.');
+        } else {
+            session()->setFlashdata('error', 'No se pudo actualizar el producto.');
+        }
+
+        return redirect()->to('/inventario');
+    }
+
+    public function descargarReporte()
+    {
+        $productoModel = new ProductoModel();
+        $productos = $productoModel->findAll();
+
+        $html = view('reporte_pf', [
+            'productos' => $productos
+        ]);
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return $this->response
+                    ->setHeader('Content-Type', 'application/pdf')
+                    ->setHeader('Content-Disposition', 'attachment; filename="reporte_inventario.pdf"')
+                    ->setBody($dompdf->output());
     }
 }
