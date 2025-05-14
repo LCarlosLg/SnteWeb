@@ -10,4 +10,3 @@ class UserModel extends Model
     protected $allowedFields = ['nombres', 'apellidos', 'email', 'telefono', 'password', 'role'];  // Campos permitidos
 }
 
-

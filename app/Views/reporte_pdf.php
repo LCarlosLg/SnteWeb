@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <title>Reporte de Inventario</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
+        body { font-family: Arial, sans-serif; font-size: 11px; margin: 0; padding: 20px; }
+        h2 { text-align: center; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+        th, td { border: 1px solid #000; padding: 6px; text-align: left; }
         th { background-color: #f2f2f2; }
     </style>
 </head>

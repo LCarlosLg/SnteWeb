@@ -119,4 +119,10 @@ class InventarioController extends BaseController
                     ->setHeader('Content-Disposition', 'attachment; filename="reporte_inventario.pdf"')
                     ->setBody($dompdf->output());
     }
+
+    public function logout()
+    {
+        session()->destroy();
+        return redirect()->to('/login'); // Asegúrate de que esta ruta esté configurada y tenga su vista
+    }
 }

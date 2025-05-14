@@ -13,6 +13,9 @@ $routes->get('register', 'UsuariosController::register');
 $routes->post('usuarios/attemptLogin', 'UsuariosController::attemptLogin');
 $routes->post('usuarios/attemptRegister', 'UsuariosController::attemptRegister');
 
+// Ruta para cerrar sesión
+$routes->get('logout', 'InventarioController::logout');
+
 // Rutas protegidas para clientes
 $routes->group('', ['filter' => 'role:cliente'], function ($routes) {
     $routes->get('productos', 'ProductosController::index');
