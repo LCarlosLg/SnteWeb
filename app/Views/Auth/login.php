@@ -9,7 +9,7 @@
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Favicon -->
+    <!-- Muestra el icono para la barra de navegacion  -->
     <link rel="icon" href="<?= base_url('images/icono.jpg') ?>" type="image/x-icon">
 </head>
 <body class="d-flex justify-content-center align-items-center vh-100">
@@ -66,7 +66,7 @@
         const isPassword = passwordInput.type === "password";
         passwordInput.type = isPassword ? "text" : "password";
 
-        // Cambiar ícono
+        // Cambia el icono de los ojos para ver y ocultar contraseña
         toggleIcon.classList.toggle("bi-eye-slash", !isPassword);
         toggleIcon.classList.toggle("bi-eye", isPassword);
     });

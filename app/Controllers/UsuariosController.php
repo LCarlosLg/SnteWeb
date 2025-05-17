@@ -58,7 +58,7 @@ class UsuariosController extends Controller
         $password  = $this->request->getPost('password');
         $role      = $this->request->getPost('tipo_usuario');
 
-        // Verificar si ya existe
+        // Esta linea verifica si el correo electronico ya existe
         if ($userModel->where('email', $email)->first()) {
             return redirect()->back()->with('error', 'El correo electrónico ya está registrado');
         }

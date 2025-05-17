@@ -2,13 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Productos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link rel="icon" href="<?= base_url('images/icono.jpg') ?>" type="image/x-icon" />
     <style>
-        
         body { background-color: #f5f5f5; }
 
         .navbar {
@@ -16,16 +15,13 @@
             background-size: 300% 300%;
             animation: gradientShift 10s ease infinite;
         }
-
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-
         .navbar * { color: white !important; }
 
-        /* Estilo para texto visible en campo de búsqueda */
         .search-bar input.form-control {
             background-color: white !important;
             color: black !important;
@@ -36,8 +32,8 @@
             background-color: white !important;
             color: #6d4c41 !important;
             border: 1px solid #6d4c41;
+            cursor: pointer;
         }
-
         .category-btn.active,
         .category-btn:hover {
             background-color: #6d4c41 !important;
@@ -49,7 +45,6 @@
             border-color: #ff6f00;
             color: white;
         }
-
         .btn-carrito:hover {
             background-color: #e65100;
             border-color: #e65100;
@@ -60,7 +55,6 @@
             border-color: #d32f2f;
             color: white;
         }
-
         .btn-cerrar-sesion:hover {
             background-color: #b71c1c;
             border-color: #b71c1c;
@@ -70,8 +64,8 @@
             background-color: #fdd835;
             border-color: #fdd835;
             color: #000;
+            cursor: pointer;
         }
-
         .btn-comprar:hover {
             background-color: #fbc02d;
             border-color: #fbc02d;
@@ -106,7 +100,6 @@
             opacity: 0;
             animation: fadeSlideIn 1.5s ease-out forwards;
         }
-
         @keyframes fadeSlideIn {
             0% { opacity: 0; transform: translateY(-20px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -115,16 +108,11 @@
 </head>
 <body>
 
-
-</body>
-</html>
-
-
 <!-- Barra superior -->
 <nav class="navbar navbar-expand-lg shadow-sm sticky-top">
     <div class="container-fluid">
         <span class="navbar-text me-2 d-flex align-items-center">
-            <img src="<?= base_url('images/perfil.png') ?>" alt="Perfil" width="32" height="32" class="rounded-circle me-2">
+            <img src="<?= base_url('images/perfil.png') ?>" alt="Perfil" width="32" height="32" class="rounded-circle me-2" />
             <span class="d-none d-sm-inline"><?= session('email') ?></span>
         </span>
 
@@ -134,10 +122,10 @@
 
         <div class="collapse navbar-collapse flex-wrap" id="topNav">
             <form class="d-flex mx-auto search-bar my-2 my-lg-0 px-2" style="max-width: 300px;">
-                <input id="searchInput" class="form-control" type="search" placeholder="Buscar producto..." aria-label="Buscar">
+                <input id="searchInput" class="form-control" type="search" placeholder="Buscar producto..." aria-label="Buscar" />
             </form>
 
-            <div class="btn-group mx-auto my-2" role="group">
+            <div class="btn-group mx-auto my-2" role="group" aria-label="Filtro categorías">
                 <button class="btn category-btn active" data-category="todos">Todos</button>
                 <button class="btn category-btn" data-category="mueble">Muebles</button>
                 <button class="btn category-btn" data-category="electrodomestico">Electrodomésticos</button>
@@ -165,7 +153,7 @@
                     </a>
                 </li>
                 <li class="nav-item me-2">
-                    <button class="btn btn-carrito position-relative" data-bs-toggle="modal" data-bs-target="#carritoModal">
+                    <button class="btn btn-carrito position-relative" data-bs-toggle="modal" data-bs-target="#carritoModal" aria-label="Abrir carrito de compras">
                         🛒
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="carrito-count">0</span>
                     </button>
@@ -177,7 +165,6 @@
         </div>
     </div>
 </nav>
-
 
 <!-- Mensaje de bienvenida -->
 <div class="mensaje-bienvenida animate-entry">
@@ -201,7 +188,7 @@
                 <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
                     <img src="<?= base_url('images/' . $img['archivo']) ?>" class="d-block w-100 rounded" style="height: 250px; object-fit: cover;" alt="Producto">
                     <div class="carousel-caption bg-dark bg-opacity-50 rounded p-2">
-                        <h5><?= $img['texto'] ?></h5>
+                        <h5><?= esc($img['texto']) ?></h5>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -216,155 +203,180 @@
         </button>
     </div>
 
-    <!-- Productos -->
-    <div class="row" id="productList">
-        <?php if (!empty($productos)): ?>
-            <?php foreach ($productos as $producto): ?>
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4 producto-card"
-                    data-nombre="<?= strtolower($producto['nombre']) ?>"
-                    data-categoria="<?= strtolower($producto['categoria']) ?>">
-                    <div class="card h-100 shadow-sm">
-                        <?php if (!empty($producto['imagen'])): ?>
-                            <img src="<?= base_url('uploads/' . $producto['imagen']) ?>" alt="Imagen de <?= esc($producto['nombre']) ?>" class="card-img-top" style="height: 200px; object-fit: cover;">
-                        <?php else: ?>
-                            <div class="product-img-placeholder">Sin imagen</div>
-                        <?php endif; ?>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title"><?= esc($producto['nombre']) ?></h5>
-                            <p class="card-text">Categoría: <?= ucfirst($producto['categoria']) ?></p>
-                            <p class="card-text">Stock: <?= $producto['stock'] ?></p>
-                            <p class="card-text text-success fw-bold">$<?= number_format($producto['precio'], 2) ?></p>
-                            <a href="#" class="btn btn-comprar mt-auto">Agregar al carrito</a>
-                        </div>
+   <!-- Productos -->
+<div class="row" id="productList">
+    <?php if (!empty($productos)): ?>
+        <?php foreach ($productos as $producto): ?>
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4 producto-card"
+                 data-nombre="<?= strtolower($producto['nombre']) ?>"
+                 data-categoria="<?= strtolower($producto['categoria']) ?>"
+                 data-id="<?= $producto['id'] ?? $producto['nombre'] ?>">
+                <div class="card h-100 shadow-sm">
+                    <?php if (!empty($producto['imagen'])): ?>
+                        <img src="<?= base_url('uploads/' . $producto['imagen']) ?>" alt="Imagen de <?= esc($producto['nombre']) ?>" class="card-img-top" style="height: 200px; object-fit: cover;">
+                    <?php else: ?>
+                        <div class="product-img-placeholder">Sin imagen</div>
+                    <?php endif; ?>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title"><?= esc($producto['nombre']) ?></h5>
+                        <p class="card-text">Categoría: <?= ucfirst(esc($producto['categoria'])) ?></p>
+                        <p class="card-text">Stock: <?= intval($producto['stock']) ?></p>
+                        <p class="card-text text-success fw-bold precio-producto">$<?= number_format($producto['precio'], 2) ?></p>
+                        <a href="#" class="btn btn-comprar mt-auto" role="button" aria-label="Agregar <?= esc($producto['nombre']) ?> al carrito">Agregar al carrito</a>
                     </div>
                 </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p class="text-center">No hay productos disponibles.</p>
-        <?php endif; ?>
-    </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p>No hay productos disponibles.</p>
+    <?php endif; ?>
 </div>
 
-<!-- Modal del Carrito -->
+<!-- Modal carrito -->
 <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tu carrito de compras</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div class="modal-body">
-                <div id="carrito-lista">
-                    <p class="text-muted">No hay productos en el carrito.</p>
-                </div>
-                <div class="mt-3 text-end fw-bold" id="carrito-total">Total: $0.00</div>
-            </div>
-            <div class="modal-footer">
-                <button id="vaciarCarritoBtn" class="btn btn-danger">Vaciar carrito</button>
-                <a href="<?= base_url('carrito/ver') ?>" class="btn btn-primary">Ver carrito completo</a>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="carritoModalLabel">Tu carrito de compras</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="carritoItems">
+        <!-- Productos agregados aquí -->
+        <p id="carrito-vacio" class="text-center text-muted">Tu carrito está vacío.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="vaciarCarrito" class="btn btn-outline-danger">Vaciar carrito</button>
+        <button type="button" id="finalizarCompra" class="btn btn-primary" disabled>Finalizar compra</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Filtrado por categorías y búsqueda
+    const productList = document.getElementById('productList');
     const searchInput = document.getElementById('searchInput');
-    const productCards = document.querySelectorAll('.producto-card');
     const categoryButtons = document.querySelectorAll('.category-btn');
-    let currentCategory = 'todos';
 
-    function filterProducts() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
+    function filtrarProductos() {
+        const textoBusqueda = searchInput.value.trim().toLowerCase();
+        const categoriaSeleccionada = Array.from(categoryButtons).find(btn => btn.classList.contains('active')).dataset.category;
 
-        productCards.forEach(card => {
-            const nombre = card.getAttribute('data-nombre');
-            const categoria = card.getAttribute('data-categoria');
+        const productos = productList.querySelectorAll('.producto-card');
+        productos.forEach(prod => {
+            const nombre = prod.dataset.nombre;
+            const categoria = prod.dataset.categoria;
+            const coincideBusqueda = nombre.includes(textoBusqueda);
+            const coincideCategoria = (categoriaSeleccionada === 'todos' || categoria === categoriaSeleccionada);
 
-            const matchesSearch = nombre.includes(searchTerm);
-            const matchesCategory = currentCategory === 'todos' || categoria === currentCategory;
-
-            if (matchesSearch && matchesCategory) {
-                card.style.display = "";
+            if (coincideBusqueda && coincideCategoria) {
+                prod.style.display = '';
             } else {
-                card.style.display = "none";
+                prod.style.display = 'none';
             }
         });
     }
 
-    // Evento al escribir en el input
-    searchInput.addEventListener('input', filterProducts);
+    searchInput.addEventListener('input', filtrarProductos);
 
-    // Evento al seleccionar categoría
     categoryButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             categoryButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentCategory = btn.getAttribute('data-category');
-            filterProducts();
+            filtrarProductos();
         });
     });
 
-    // ----------------- CÓDIGO DEL CARRITO (ya estaba bien) -----------------
-    const carrito = [];
-    const carritoLista = document.getElementById('carrito-lista');
+    // Carrito de compras en memoria
+    let carrito = [];
+
+    const carritoItems = document.getElementById('carritoItems');
     const carritoCount = document.getElementById('carrito-count');
-    const vaciarCarritoBtn = document.getElementById('vaciarCarritoBtn');
+    const carritoVacio = document.getElementById('carrito-vacio');
+    const finalizarCompraBtn = document.getElementById('finalizarCompra');
+    const vaciarCarritoBtn = document.getElementById('vaciarCarrito');
 
-    function formatPrice(value) {
-        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(value);
-    }
-
-    function actualizarCarrito() {
-        carritoLista.innerHTML = '';
+    function actualizarCarritoUI() {
+        carritoItems.innerHTML = '';
         if (carrito.length === 0) {
-            carritoLista.innerHTML = '<p class="text-muted">No hay productos en el carrito.</p>';
+            carritoVacio.style.display = 'block';
+            finalizarCompraBtn.disabled = true;
             carritoCount.textContent = '0';
-            document.getElementById('carrito-total').textContent = 'Total: $0.00';
             return;
         }
+        carritoVacio.style.display = 'none';
+        finalizarCompraBtn.disabled = false;
+        carritoCount.textContent = carrito.reduce((acc, p) => acc + p.cantidad, 0);
 
-        carritoCount.textContent = carrito.length;
-        let total = carrito.reduce((sum, item) => sum + item.precio, 0);
-        document.getElementById('carrito-total').textContent = `Total: ${formatPrice(total)}`;
-
-        carrito.forEach((item, index) => {
+        carrito.forEach(producto => {
             const div = document.createElement('div');
-            div.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'border-bottom', 'py-2');
+            div.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-2', 'border-bottom', 'pb-2');
+
             div.innerHTML = `
                 <div>
-                    <strong>${item.nombre}</strong><br>
-                    <small>Precio: ${formatPrice(item.precio)}</small>
+                    <h6 class="mb-0">${producto.nombre}</h6>
+                    <small>$${producto.precio.toFixed(2)} x ${producto.cantidad}</small>
                 </div>
-                <button class="btn btn-sm btn-danger" onclick="eliminarDelCarrito(${index})">✕</button>
+                <div>
+                    <button class="btn btn-sm btn-outline-danger btn-eliminar" data-id="${producto.id}" aria-label="Eliminar ${producto.nombre} del carrito">Eliminar</button>
+                </div>
             `;
-            carritoLista.appendChild(div);
+            carritoItems.appendChild(div);
+        });
+
+        // Añadir event listeners a los botones eliminar
+        document.querySelectorAll('.btn-eliminar').forEach(btn => {
+            btn.addEventListener('click', e => {
+                const id = e.target.dataset.id;
+                carrito = carrito.filter(p => p.id !== id);
+                actualizarCarritoUI();
+            });
         });
     }
 
-    function eliminarDelCarrito(index) {
-        carrito.splice(index, 1);
-        actualizarCarrito();
+    function agregarAlCarrito(producto) {
+        const index = carrito.findIndex(p => p.id === producto.id);
+        if (index !== -1) {
+            carrito[index].cantidad++;
+        } else {
+            producto.cantidad = 1;
+            carrito.push(producto);
+        }
+        actualizarCarritoUI();
     }
 
-    vaciarCarritoBtn.addEventListener('click', () => {
-        carrito.length = 0;
-        actualizarCarrito();
-    });
-
-    document.querySelectorAll('.btn-comprar').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    productList.addEventListener('click', e => {
+        if (e.target.classList.contains('btn-comprar')) {
             e.preventDefault();
             const card = e.target.closest('.producto-card');
-            const nombre = card.querySelector('.card-title').textContent;
-            const precioTexto = card.querySelector('.text-success').textContent.replace('$', '').replace(/,/g, '').trim();
-            const precio = parseFloat(precioTexto);
-            carrito.push({ nombre, precio });
-            actualizarCarrito();
-        });
+            if (!card) return;
+            const producto = {
+                id: card.dataset.id,
+                nombre: card.dataset.nombre.charAt(0).toUpperCase() + card.dataset.nombre.slice(1),
+                precio: parseFloat(
+                    card.querySelector('.precio-producto').textContent
+                    .replace(/[^0-9.,]/g, '')
+                    .replace(',', '.')
+                )
+            };
+            agregarAlCarrito(producto);
+        }
     });
-</script>
 
+    vaciarCarritoBtn.addEventListener('click', () => {
+        if(confirm('¿Quieres vaciar el carrito?')) {
+            carrito = [];
+            actualizarCarritoUI();
+        }
+    });
+
+    finalizarCompraBtn.addEventListener('click', () => {
+        alert('Funcionalidad de finalizar compra aún no implementada.');
+    });
+
+    // Inicializar UI carrito vacío
+    actualizarCarritoUI();
+</script>
 </body>
 </html>

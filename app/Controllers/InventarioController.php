@@ -8,23 +8,45 @@ class InventarioController extends BaseController
 {
     public function index()
     {
-        $productoModel = new ProductoModel();
-        $data['productos'] = $productoModel->findAll();
+        $buscar = $this->request->getGet('buscar');
 
-        $data['success'] = session()->getFlashdata('success');
-        $data['error'] = session()->getFlashdata('error');
+        $model = new ProductoModel();
 
-        return view('inventario', $data);
+        if ($buscar) {
+            $productos = $model->like('nombre', $buscar)->findAll();
+        } else {
+            $productos = $model->findAll();
+        }
+
+        return view('inventario', [
+            'productos' => $productos,
+            'buscar' => $buscar,
+        ]);
     }
 
     public function agregar()
     {
         helper(['form', 'url']);
         $imagen = $this->request->getFile('imagen');
-        $imagenBlob = null;
+        $imagenRuta = null;
 
         if ($imagen && $imagen->isValid() && !$imagen->hasMoved()) {
-            $imagenBlob = file_get_contents($imagen->getTempName());
+            $nombreArchivo = $imagen->getRandomName();
+
+            // Mover la imagen a writable/uploads
+            $imagen->move(WRITEPATH . 'uploads', $nombreArchivo);
+
+            // Copiar la imagen a public_html/uploads
+            $origen = WRITEPATH . 'uploads/' . $nombreArchivo;
+            $destino = FCPATH . 'uploads/' . $nombreArchivo;
+
+            if (!is_dir(FCPATH . 'uploads')) {
+                mkdir(FCPATH . 'uploads', 0755, true);
+            }
+
+            copy($origen, $destino);
+
+            $imagenRuta = $nombreArchivo;
         }
 
         $productoModel = new ProductoModel();
@@ -33,7 +55,7 @@ class InventarioController extends BaseController
             'stock' => $this->request->getPost('stock'),
             'precio' => $this->request->getPost('precio'),
             'categoria' => $this->request->getPost('categoria'),
-            'imagen' => $imagenBlob
+            'imagen' => $imagenRuta
         ]);
 
         session()->setFlashdata('success', 'Producto agregado correctamente.');
@@ -43,6 +65,20 @@ class InventarioController extends BaseController
     public function eliminar($id)
     {
         $productoModel = new ProductoModel();
+        $producto = $productoModel->find($id);
+
+        // Borrar imagen física si existe
+        if ($producto && $producto['imagen']) {
+            $rutaImagen = WRITEPATH . 'uploads/' . $producto['imagen'];
+            if (file_exists($rutaImagen)) {
+                unlink($rutaImagen);
+            }
+            $rutaImagenPublic = FCPATH . 'uploads/' . $producto['imagen'];
+            if (file_exists($rutaImagenPublic)) {
+                unlink($rutaImagenPublic);
+            }
+        }
+
         if ($productoModel->delete($id)) {
             session()->setFlashdata('success', 'Producto eliminado correctamente.');
         } else {
@@ -51,18 +87,19 @@ class InventarioController extends BaseController
         return redirect()->to('/inventario');
     }
 
-    public function obtenerImagen($id)
+    public function mostrarImagen($nombreArchivo)
     {
-        $productoModel = new ProductoModel();
-        $producto = $productoModel->find($id);
+        $ruta = WRITEPATH . 'uploads/' . $nombreArchivo;
 
-        if ($producto && $producto['imagen']) {
-            return $this->response
-                        ->setHeader('Content-Type', 'image/jpeg')
-                        ->setBody($producto['imagen']);
+        if (!file_exists($ruta)) {
+            return $this->response->redirect(site_url('images/placeholder.png'));
         }
 
-        return redirect()->to(base_url('images/placeholder.png'));
+        $mime = mime_content_type($ruta);
+        $imagenContenido = file_get_contents($ruta);
+
+        return $this->response->setHeader('Content-Type', $mime)
+                              ->setBody($imagenContenido);
     }
 
     public function actualizar($id)
@@ -77,10 +114,34 @@ class InventarioController extends BaseController
         }
 
         $imagen = $this->request->getFile('imagen');
-        $imagenBlob = $producto['imagen'];
+        $imagenRuta = $producto['imagen'];
 
         if ($imagen && $imagen->isValid() && !$imagen->hasMoved()) {
-            $imagenBlob = file_get_contents($imagen->getTempName());
+            // Borrar imagen anterior en writable/uploads
+            if ($imagenRuta && file_exists(WRITEPATH . 'uploads/' . $imagenRuta)) {
+                unlink(WRITEPATH . 'uploads/' . $imagenRuta);
+            }
+            // Borrar imagen anterior en public_html/uploads
+            if ($imagenRuta && file_exists(FCPATH . 'uploads/' . $imagenRuta)) {
+                unlink(FCPATH . 'uploads/' . $imagenRuta);
+            }
+
+            $nombreArchivo = $imagen->getRandomName();
+
+            // Mover la imagen a writable/uploads
+            $imagen->move(WRITEPATH . 'uploads', $nombreArchivo);
+
+            // Copiar la imagen a public_html/uploads
+            $origen = WRITEPATH . 'uploads/' . $nombreArchivo;
+            $destino = FCPATH . 'uploads/' . $nombreArchivo;
+
+            if (!is_dir(FCPATH . 'uploads')) {
+                mkdir(FCPATH . 'uploads', 0755, true);
+            }
+
+            copy($origen, $destino);
+
+            $imagenRuta = $nombreArchivo;
         }
 
         $actualizado = $productoModel->update($id, [
@@ -88,7 +149,7 @@ class InventarioController extends BaseController
             'stock' => $this->request->getPost('stock'),
             'precio' => $this->request->getPost('precio'),
             'categoria' => $this->request->getPost('categoria'),
-            'imagen' => $imagenBlob
+            'imagen' => $imagenRuta
         ]);
 
         if ($actualizado) {
@@ -123,6 +184,6 @@ class InventarioController extends BaseController
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/login'); // Asegúrate de que esta ruta esté configurada y tenga su vista
+        return redirect()->to('/login');
     }
 }

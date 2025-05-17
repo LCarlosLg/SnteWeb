@@ -21,7 +21,8 @@
 
             <div class="collapse navbar-collapse justify-content-between" id="navbarContenido">
                 <form class="d-flex my-2 my-lg-0 w-100 me-3" method="get" action="<?= base_url('inventario') ?>">
-                    <input class="form-control me-2" name="buscar" type="search" placeholder="Buscar producto..." aria-label="Buscar">
+                    <input class="form-control me-2" name="buscar" type="search" placeholder="Buscar producto..." aria-label="Buscar"
+                        value="<?= esc($buscar) ?>">
                     <button class="btn btn-outline-success" type="submit">Buscar</button>
                 </form>
                 <div class="d-flex flex-wrap gap-2 mt-2 mt-lg-0">
@@ -33,21 +34,21 @@
     </nav>
 
     <!-- Mensajes -->
-    <?php if (!empty($success)): ?>
+    <?php if (!empty(session()->getFlashdata('success'))): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= esc($success) ?>
+            <?= session()->getFlashdata('success') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
-    <?php if (!empty($error)): ?>
+    <?php if (!empty(session()->getFlashdata('error'))): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= esc($error) ?>
+            <?= session()->getFlashdata('error') ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     <?php endif; ?>
 
-    <!-- Tabla de productos sin fecha -->
+    <!-- Tabla de productos -->
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
             <h5 class="mb-2 mb-md-0">Lista de productos</h5>
@@ -70,7 +71,11 @@
                         <?php foreach ($productos as $producto): ?>
                             <tr>
                                 <td style="width: 100px;">
-                                    <img src="<?= base_url('inventario/imagen/' . $producto['id']) ?>" alt="Imagen" class="img-thumbnail" width="60">
+                                    <?php if ($producto['imagen']): ?>
+                                        <img src="<?= base_url('inventario/mostrarImagen/' . $producto['imagen']) ?>" alt="Imagen" class="img-thumbnail" width="60">
+                                    <?php else: ?>
+                                        <img src="<?= base_url('images/placeholder.png') ?>" alt="Sin imagen" class="img-thumbnail" width="60">
+                                    <?php endif; ?>
                                 </td>
                                 <td><?= esc($producto['nombre']) ?></td>
                                 <td><?= esc($producto['stock']) ?></td>
@@ -95,13 +100,13 @@
 
 <!-- Modal Agregar/Editar Producto -->
 <div class="modal fade" id="modalProducto" tabindex="-1">
-<div class="modal-dialog">
+  <div class="modal-dialog">
     <div class="modal-content">
-    <form action="<?= base_url('inventario/agregar') ?>" method="post" enctype="multipart/form-data" id="formProducto">
+      <form action="<?= base_url('inventario/agregar') ?>" method="post" enctype="multipart/form-data" id="formProducto">
         <input type="hidden" name="id" id="productoId">
         <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Agregar/Editar Producto</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <h5 class="modal-title" id="modalLabel">Agregar/Editar Producto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
             <div class="mb-3">
@@ -126,16 +131,17 @@
             </div>
             <div class="mb-3">
                 <label>Imagen</label>
-                <input type="file" name="imagen" class="form-control">
+                <input type="file" name="imagen" class="form-control" accept="image/*">
+                <small class="form-text text-muted">Si quieres cambiar la imagen, selecciona un archivo nuevo.</small>
             </div>
         </div>
         <div class="modal-footer">
-        <button type="submit" class="btn btn-primary">Guardar</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
-    </form>
+      </form>
     </div>
-</div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -164,4 +170,3 @@ function editarProducto(producto) {
 
 </body>
 </html>
-
