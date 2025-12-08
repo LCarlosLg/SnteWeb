@@ -8,7 +8,7 @@
 <body>
 <div class="container mt-5">
     <h2>¿A qué domicilio te facturamos?</h2>
-    <form action="<?= base_url('checkout/pago') ?>" method="post">
+    <form action="<?= base_url('checkout/guardarDireccion')?>" method="post">
         <div class="row mb-3">
             <div class="col">
                 <label>Calle</label>
@@ -31,7 +31,6 @@
 
         <div class="mb-3">
             <label>¿Entre qué calles está? (opcional)</label>
-            <input type="text" name="entre_calles" class="form-control">
         </div>
 
         <div class="row mb-3">

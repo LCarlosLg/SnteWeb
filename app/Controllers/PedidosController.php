@@ -10,7 +10,7 @@ class PedidosController extends Controller
     public function index()
     {
         $session = session();
-        $usuarioId = $session->get('usuario_id');
+        $usuarioId = $session->get('user_id');
 
         $pedidoModel = new PedidoModel();
         $pedidos = $pedidoModel->where('usuario_id', $usuarioId)
