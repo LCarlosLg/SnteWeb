@@ -61,32 +61,18 @@
 
     <!-- Paso 2: Pago -->
     <div id="step-2" class="step-section">
-        <h4>Pago con tarjeta</h4>
-        <form id="pagoForm" method="post" action="<?= base_url('checkout/confirmar') ?>">
-            <div class="mb-3">
-                <label for="tarjeta" class="form-label">Número de tarjeta</label>
-                <input type="text" class="form-control" id="tarjeta" name="tarjeta" required>
-            </div>
-            <div class="mb-3">
-                <label for="nombre" class="form-label">Nombre del titular</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" required>
-            </div>
-            <div class="mb-3">
-                <label for="exp" class="form-label">Fecha de expiración</label>
-                <input type="month" class="form-control" id="exp" name="exp" required>
-            </div>
-            <div class="mb-3">
-                <label for="cvv" class="form-label">CVV</label>
-                <input type="text" class="form-control" id="cvv" name="cvv" required>
-            </div>
-
-            <!-- Se agregan los campos de dirección ocultos -->
-            <input type="hidden" name="direccion" id="hiddenDireccion">
-            <input type="hidden" name="colonia" id="hiddenColonia">
-            <input type="hidden" name="cp" id="hiddenCp">
-
-            <button type="submit" class="btn btn-success">Pagar y confirmar</button>
-        </form>
+        <h4 class="mb-4">Finalizar Compra</h4>
+        <div class="card p-4 shadow-sm text-center">
+            <p class="mb-4">Serás redirigido a la plataforma segura de Stripe para completar tu pago.</p>
+            
+            <a href="<?= base_url('checkout/stripe') ?>" class="btn btn-primary btn-lg w-100">
+                Pagar con Tarjeta <i class="bi bi-credit-card-2-front-fill ms-2"></i>
+            </a>
+            
+            <small class="text-muted mt-3 d-block">Pagos seguros y encriptados</small>
+        </div>
+        
+        <button type="button" class="btn btn-secondary mt-3" onclick="showStep(1)">Atrás</button>
     </div>
 </div>
 
