@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\ProductoModel;
+use App\Models\PedidoModel;
 use App\Libraries\DompdfLoader;
 
 class InventarioController extends BaseController
@@ -18,8 +19,18 @@ class InventarioController extends BaseController
             $productos = $model->findAll();
         }
 
+        // --- NUEVA LÓGICA DE PEDIDOS ---
+        $pedidoModel = new PedidoModel();
+        
+        // Hacemos un JOIN para saber el nombre del cliente que hizo el pedido
+        $pedidos = $pedidoModel->select('pedidos.*, usuarios.nombres, usuarios.apellidos, usuarios.email')
+                               ->join('usuarios', 'usuarios.id = pedidos.usuario_id')
+                               ->orderBy('pedidos.fecha_pedido', 'DESC')
+                               ->findAll();
+
         return view('inventario', [
             'productos' => $productos,
+            'pedidos'   => $pedidos,
             'buscar' => $buscar,
         ]);
     }

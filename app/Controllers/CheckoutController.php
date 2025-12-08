@@ -20,18 +20,21 @@ class CheckoutController extends Controller
     {
         $session = session();
 
+        // Recibimos los datos del formulario con los nombres exactos de la vista
         $direccion = [
-            'nombre' => $this->request->getPost('nombre'),
-            'apellidos' => $this->request->getPost('apellidos'),
-            'telefono' => $this->request->getPost('telefono'),
-            'direccion' => $this->request->getPost('direccion'),
-            'codigo_postal' => $this->request->getPost('codigo_postal'),
-            'estado' => $this->request->getPost('estado'),
-            'ciudad' => $this->request->getPost('ciudad'),
+            'calle'           => $this->request->getPost('calle'),
+            'cp'              => $this->request->getPost('cp'),
+            'numero_exterior' => $this->request->getPost('numero_exterior'),
+            'numero_interior' => $this->request->getPost('numero_interior'),
+            'colonia'         => $this->request->getPost('colonia'),
+            'ciudad'          => $this->request->getPost('ciudad'),
+            'referencias'     => $this->request->getPost('referencias'),
         ];
 
+        // Guardamos en sesión
         $session->set('direccion', $direccion);
 
+        // Redirigimos a Stripe
         return redirect()->to(base_url('checkout/stripe'));
     }
 
