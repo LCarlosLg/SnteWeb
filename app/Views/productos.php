@@ -128,7 +128,7 @@
             <div class="btn-group mx-auto my-2" role="group" aria-label="Filtro categorías">
                 <button class="btn category-btn active" data-category="todos">Todos</button>
                 <button class="btn category-btn" data-category="mueble">Muebles</button>
-                <button class="btn category-btn" data-category="electrodomestico">Electrodomésticos</button>
+                <button class="btn category-btn" data-category="electrodoméstico">Electrodomésticos</button>
             </div>
 
             <ul class="navbar-nav ms-auto d-flex flex-row align-items-center">

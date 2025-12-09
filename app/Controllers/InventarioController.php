@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Models\ProductoModel;
 use App\Models\PedidoModel;
 use App\Libraries\DompdfLoader;
+use App\Models\DetallePedidoModel;
 
 class InventarioController extends BaseController
 {
@@ -27,7 +28,20 @@ class InventarioController extends BaseController
                                ->join('usuarios', 'usuarios.id = pedidos.usuario_id')
                                ->orderBy('pedidos.fecha_pedido', 'DESC')
                                ->findAll();
-
+                               
+        // 3. ¡NUEVO! Obtener los productos de cada pedido
+        $detalleModel = new DetallePedidoModel();
+        
+        // Recorremos cada pedido para "inyectarle" sus productos
+        foreach ($pedidos as &$pedido) {
+            $detalles = $detalleModel->select('detalle_pedidos.cantidad, productos.nombre')
+                                     ->join('productos', 'productos.id = detalle_pedidos.producto_id')
+                                     ->where('pedido_id', $pedido['id'])
+                                     ->findAll();
+            
+            $pedido['productos_comprados'] = $detalles; // Guardamos la lista dentro del pedido
+        }
+        
         return view('inventario', [
             'productos' => $productos,
             'pedidos'   => $pedidos,
